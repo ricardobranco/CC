@@ -1,0 +1,134 @@
+Ricardo Branco A61075
+
+1-
+	a)
+		O ficheiro /etc/resolve.conf é um ficheiro para configurar o DNS no pc do cliente.
+
+	b) O dominio existe e é um dominio pois apresenta Type=A (Adress).
+		;; QUESTION SECTION:
+		;cesium.di.uminho.pt.		IN	A
+
+		;; ANSWER SECTION:
+		cesium.di.uminho.pt.	14400	IN	A	193.136.19.148
+	
+	c) São servidores de nomes todos aqules que apresentarem type=NS
+
+		//dig di.uminho.pt NS
+		;; QUESTION SECTION:
+		;di.uminho.pt.			IN	NS
+
+		;; ANSWER SECTION:
+		di.uminho.pt.		14400	IN	NS	ns3.eurotux.com.
+		di.uminho.pt.		14400	IN	NS	dns.di.uminho.pt.
+		di.uminho.pt.		14400	IN	NS	marco.uminho.pt.
+		di.uminho.pt.		14400	IN	NS	ns1.eurotux.com.
+		di.uminho.pt.		14400	IN	NS	dns2.uminho.pt.
+		di.uminho.pt.		14400	IN	NS	dns.uminho.pt.
+		di.uminho.pt.		14400	IN	NS	alfa.di.uminho.pt.
+		di.uminho.pt.		14400	IN	NS	dns3.uminho.pt.
+		di.uminho.pt.		14400	IN	NS	dns2.di.uminho.pt.
+
+
+		
+		//dig uminho.pt. NS
+		;; QUESTION SECTION:
+		;uminho.pt.			IN	NS
+
+		;; ANSWER SECTION:
+		uminho.pt.		86400	IN	NS	dns.uminho.pt.
+		uminho.pt.		86400	IN	NS	dns3.uminho.pt.
+		uminho.pt.		86400	IN	NS	ns02.fccn.pt.
+		uminho.pt.		86400	IN	NS	dns2.uminho.pt.
+
+		//dig pt. NS
+
+		;; QUESTION SECTION:
+		;pt.				IN	NS
+
+		;; ANSWER SECTION:
+		pt.			14400	IN	NS	ns2.nic.fr.
+		pt.			14400	IN	NS	ns.dns.br.
+		pt.			14400	IN	NS	ns.dns.pt.
+		pt.			14400	IN	NS	auth210.ns.uu.net.
+		pt.			14400	IN	NS	ns2.dns.pt.
+		pt.			14400	IN	NS	ns-pt.nlnetlabs.nl.
+		pt.			14400	IN	NS	sns-pb.isc.org.
+		pt.			14400	IN	NS	auth200.ns.uu.net.
+
+
+		//dig . NS
+		;; QUESTION SECTION:
+		;.				IN	NS
+
+		;; ANSWER SECTION:
+		.			518400	IN	NS	b.root-servers.net.
+		.			518400	IN	NS	l.root-servers.net.
+		.			518400	IN	NS	e.root-servers.net.
+		.			518400	IN	NS	f.root-servers.net.
+		.			518400	IN	NS	a.root-servers.net.
+		.			518400	IN	NS	i.root-servers.net.
+		.			518400	IN	NS	k.root-servers.net.
+		.			518400	IN	NS	g.root-servers.net.
+		.			518400	IN	NS	c.root-servers.net.
+		.			518400	IN	NS	d.root-servers.net.
+		.			518400	IN	NS	j.root-servers.net.
+		.			518400	IN	NS	h.root-servers.net.
+		.			518400	IN	NS	m.root-servers.net.
+
+
+	d) Todas as mensagens são entregues nos servidores que apresentarem Type = MX
+
+		//dig user@cesium.di.uminho.pt MX
+
+		;; QUESTION SECTION:
+		;user\@cesium.di.uminho.pt.	IN	MX
+
+		;; AUTHORITY SECTION:
+		di.uminho.pt.		14400	IN	SOA	dns.di.uminho.pt. dnsadmin.di.uminho.pt. 2013031501 28800 7200 604800 43200
+
+		//dig user@alunos.uminho.pt MX
+		;; QUESTION SECTION:
+		;user\@alunos.uminho.pt.		IN	MX
+
+		;; AUTHORITY SECTION:
+		uminho.pt.		14400	IN	SOA	dns.uminho.pt. servicos.scom.uminho.pt. 2013041200 21600 7200 604800 14400
+
+	e) É considerado servidor de DNS primário se apresentar Type=SOA
+		
+		//dig di.uminho.pt SOA
+		;; QUESTION SECTION:
+		;di.uminho.pt.			IN	SOA
+
+		;; ANSWER SECTION:
+		di.uminho.pt.		14400	IN	SOA	dns.di.uminho.pt. dnsadmin.di.uminho.pt. 2013031501 28800 7200 604800 43200
+
+	f)Para obter informações sobre o IPv4 193.136.9.1 usou-se o comando host
+		//host 193.136.9.1
+		1.9.136.193.in-addr.arpa domain name pointer cisco.uminho.pt.
+
+
+	g)
+		//host 2001:690:A00:1036:1113::247 2001:690:2280:1::75
+		Using domain server:
+		Name: 2001:690:2280:1::75
+		Address: 2001:690:2280:1::75#53
+		Aliases:
+
+		7.4.2.0.0.0.0.0.0.0.0.0.3.1.1.1.6.3.0.1.0.0.a.0.0.9.6.0.1.0.0.2.ip6.arpa domain name pointer www.fccn.pt.
+
+2- É uma resposta autoritativa
+	Server:		193.137.16.145
+	Address:	193.137.16.145#53
+
+	Name:	di.uminho.pt
+	Address: 193.136.19.20		
+
+	Se fosse uma resposta não autoritativa o resultado seria algo do genero do exemplo seguinte
+		nslookup fccn.pt                                                                                               ▸▸▸▸▸▸▸▸▸▸
+		;; Got SERVFAIL reply from 193.137.16.65, trying next server
+		Server:		193.137.16.145
+		Address:	193.137.16.145#53
+
+		Non-authoritative answer:
+		Name:	fccn.pt
+		Address: 193.137.196.247			
