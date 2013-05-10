@@ -20,15 +20,13 @@ public class Request implements Runnable {
     public void run() {
         try {
             PDU pedido = (PDU) Peer.desSerializa(dp.getData());
-            DatagramPacket respostaDP;
-            PDU respostaPDU;
-            byte[] respostaByte;
+            DatagramPacket resposta;
             String pduName = pedido.getClass().getSimpleName();
+
+
             if (pduName.equals("Hello")) {
-                respostaPDU = new Resposta(dp.getAddress(), dp.getPort(), dp.getData().length);
-                respostaByte = Peer.serializa(respostaPDU);
-                respostaDP = new DatagramPacket(respostaByte, respostaByte.length, respostaPDU.ip, respostaPDU.porta);
-                ds.send(respostaDP);
+                resposta = new DatagramPacket(dp.getData(), dp.getData().length, dp.getAddress(), dp.getPort());
+                ds.send(resposta);
             } else if (pduName.equals("Chunk")) {
             }
 

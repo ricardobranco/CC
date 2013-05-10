@@ -12,7 +12,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -85,24 +84,24 @@ public class Peer {
 
         try {
             byte[] hello = Peer.serializa(pdu);
-            DatagramSocket ds = new DatagramSocket();
-            DatagramPacket dp = new DatagramPacket(hello, hello.length, ip, port);
-            DatagramPacket dpresposta;
-            boolean flag = true;
-            while (ntry > 0 && flag) {
-                ds.send(dp);
-                ds.setSoTimeout(Peer.T3);
-                dpresposta = new DatagramPacket(hello, hello.length);
-                try {
-                    ds.receive(dpresposta);
-                    res = true;
-                    flag = false;
-                } catch (SocketTimeoutException e) {
-                    ntry--;
-                    System.out.println("FAIL - remaining attempts:" + ntry);
+            try (DatagramSocket ds = new DatagramSocket()) {
+                DatagramPacket dp = new DatagramPacket(hello, hello.length, ip, port);
+                DatagramPacket dpresposta;
+                boolean flag = true;
+                while (ntry > 0 && flag) {
+                    ds.send(dp);
+                    ds.setSoTimeout(Peer.T3);
+                    dpresposta = new DatagramPacket(hello, hello.length);
+                    try {
+                        ds.receive(dpresposta);
+                        res = true;
+                        flag = false;
+                    } catch (SocketTimeoutException e) {
+                        ntry--;
+                        System.out.println("FAIL - remaining attempts:" + ntry);
+                    }
                 }
             }
-            ds.close();
         } catch (SocketException ex) {
             Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -113,9 +112,9 @@ public class Peer {
     }
 
     public static byte[] readChunk(String file, int offset, int size) {
-        
+
         return null;
-        
+
     }
 
     public static void main(String args[]) {
