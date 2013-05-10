@@ -14,3 +14,9 @@
 *.jar
 *.war
 *.ear
+/TP2/P2P/nbproject/private/
+/TP2/P2P/build/
+/TP2/P2P/dist/
+/TP2/p2p_app/nbproject/private/
+/TP2/p2p_app/build/
+/TP2/p2p_app/dist/
