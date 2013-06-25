@@ -22,7 +22,7 @@ public class Checker implements Runnable {
                     }
                 }
                 Thread.sleep(Peer.T1);
-            } catch (InterruptedException ex) {
+            } catch (Exception ex) {
                
             }
 

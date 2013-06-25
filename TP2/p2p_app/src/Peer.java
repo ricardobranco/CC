@@ -30,7 +30,7 @@ public class Peer {
     public static int R = 7; //Nº TENTATIVAS
     public static Set<InetAddress> validPeer = new HashSet<>();
     public static Set<InetAddress> myIP = Peer.getSelfIPs();
-    public static Map<String, Set<FileRegister>> files = new HashMap<>();
+    public static Map<String, Set<FileRegister>> completed = new HashMap<>();
      
     Server servidor;
     Client cliente;
@@ -105,18 +105,18 @@ public class Peer {
                             Peer.addIP(inA);
                         }
                         for (String skey : hr.ficheiros.keySet()) {
-                            if(!Peer.files.containsKey(skey)){
-                                Peer.files.put(skey,new HashSet<FileRegister>());
+                            if(!Peer.completed.containsKey(skey)){
+                                Peer.completed.put(skey,new HashSet<FileRegister>());
                             }
                             for(FileRegister fr : hr.ficheiros.get(skey)){
-                                Peer.files.get(skey).add(fr);
+                                Peer.completed.get(skey).add(fr);
                             }
                         }
                         res = true;
                         flag = false;
                     } catch (SocketTimeoutException e) {
                         ntry--;
-                        System.out.println("Try find: "+ip.getHostAddress()+" - remaining attempts:" + ntry);
+                        System.out.println("A Procurar : "+ip.getHostAddress()+" - Tentativas Restantes:" + ntry);
                     }
                 }
             }
@@ -185,13 +185,24 @@ public class Peer {
         for (InetAddress ip : validPeer) {
             System.out.println("\t" + ip.getHostAddress());
         }
-        System.out.println("--VALORES DEFAULT: " + PORT);
+        System.out.println("--VALORES DEFAULT: ");
 
         System.out.println("\tPORTA : " + PORT);
         System.out.println("\tT1: " + T1);
         System.out.println("\tT3: " + T3);
         System.out.println("\tR: " + PORT);
         System.out.println("\tCONFIG FILE: " + CONFIGFILE);
+        
+        System.out.println("--Ficheiros");
+        for(String fkey : completed.keySet()){
+            System.out.println("\t"+fkey+":");
+            for(FileRegister fr : completed.get(fkey)){
+                System.out.println("\t\t"+fr.ip.getHostAddress());
+            }
+        }
+
+        
+        
     }
 
     public static void register(String path) { 
@@ -199,13 +210,15 @@ public class Peer {
         if (!file.exists()) {
             System.out.println("Ficheiro inexistente");
         } else {
-
-            FileRegister fr = new FileRegister(file.getName(), file.getAbsolutePath(), null, Peer.PORT, file.length());
-            if(!files.containsKey(fr.nome)){
-                files.put(fr.nome, new HashSet<FileRegister>());
+            
+            InetAddress ip = myIP.iterator().next();
+            System.out.println(ip.getHostAddress());
+            FileRegister fr = new FileRegister(file.getName(), file.getAbsolutePath(),ip, Peer.PORT, file.length());
+            if(!completed.containsKey(fr.nome)){
+                completed.put(fr.nome, new HashSet<FileRegister>());
             }
-            files.get(fr.nome).add(fr);
-            System.out.println("Register: " + fr.nome);
+            completed.get(fr.nome).add(fr);
+            System.out.println("Registado: " + fr.nome + " com o ip "+fr.ip.getHostAddress());
         }
     }
 

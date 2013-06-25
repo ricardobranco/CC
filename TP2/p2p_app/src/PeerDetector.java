@@ -105,7 +105,7 @@ public class PeerDetector implements Runnable {
             }
 
             try {
-                Thread.sleep(Peer.T1 * 100);
+                Thread.sleep(Peer.T1*100);
             } catch (InterruptedException ex) {
                 Logger.getLogger(PeerDetector.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -26,7 +26,7 @@ public class Request implements Runnable {
             byte[] byte_resposta;
             switch (pduName) {
                 case "Hello":
-                    HelloResponse hr = new HelloResponse(dp.getAddress(), dp.getPort(), Peer.validPeer,Peer.files);
+                    HelloResponse hr = new HelloResponse(dp.getAddress(), dp.getPort(), Peer.validPeer,Peer.completed);
                     byte_resposta = Peer.serializa(hr);
                     resposta = new DatagramPacket(byte_resposta, byte_resposta.length, dp.getAddress(), dp.getPort());
                     ds.send(resposta);

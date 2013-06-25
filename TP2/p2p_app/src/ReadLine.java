@@ -23,16 +23,20 @@ public class ReadLine implements Runnable {
         Pattern pget = Pattern.compile(get + fileREG);
         Pattern pstatus = Pattern.compile(status);
 
-        if (pregister.matcher(readline).matches()) {
+        if (pregister.matcher(readline).matches()) {//REGISTO DE UM FICHEIRO
             List<String> regToken = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(readline, " ");
             while(st.hasMoreTokens()){
                 regToken.add(st.nextToken());
             }
             Peer.register(regToken.get(1));
+     
+        
+        
         } else if (pget.matcher(readline).matches()) {
             
         } else if (pstatus.matcher(readline).matches()) {
+            Peer.status();
         } else {
             System.out.println("Comando Invalido");
         }
