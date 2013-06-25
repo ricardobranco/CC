@@ -23,7 +23,7 @@ public class Checker implements Runnable {
                 }
                 Thread.sleep(Peer.T1);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Checker.class.getName()).log(Level.SEVERE, null, ex);
+               
             }
 
         }

@@ -5,10 +5,10 @@ import java.net.InetAddress;
 public abstract class PDU implements Serializable {
 
     InetAddress ip;
-    int porta;
+    int port;
 
-    public PDU(InetAddress ip, int porta) {
+    public PDU(InetAddress ip, int port) {
         this.ip = ip;
-        this.porta = porta;
+        this.port = port;
     }
 }

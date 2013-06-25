@@ -4,6 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class Request implements Runnable {
 
@@ -22,12 +23,20 @@ public class Request implements Runnable {
             PDU pedido = (PDU) Peer.desSerializa(dp.getData());
             DatagramPacket resposta;
             String pduName = pedido.getClass().getSimpleName();
+            byte[] byte_resposta;
+            switch (pduName) {
+                case "Hello":
+                    HelloResponse hr = new HelloResponse(dp.getAddress(), dp.getPort(), Peer.validPeer,Peer.files);
+                    byte_resposta = Peer.serializa(hr);
+                    resposta = new DatagramPacket(byte_resposta, byte_resposta.length, dp.getAddress(), dp.getPort());
+                    ds.send(resposta);
+                    break;
+                case "Chunk":
+                    break;
+                case "Comand":
+                    
 
-
-            if (pduName.equals("Hello")) {
-                resposta = new DatagramPacket(dp.getData(), dp.getData().length, dp.getAddress(), dp.getPort());
-                ds.send(resposta);
-            } else if (pduName.equals("Chunk")) {
+                    break;
             }
 
 
