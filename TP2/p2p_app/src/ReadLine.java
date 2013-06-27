@@ -18,25 +18,29 @@ public class ReadLine implements Runnable {
         String pathREG = "(\\/?([A-Za-z_0-9]+\\/))?";
         String register = "register\\s";
         String get = "get\\s";
+        String find = "find\\s";
         String status = "status";
         Pattern pregister = Pattern.compile(register + pathREG + fileREG);
         Pattern pget = Pattern.compile(get + fileREG);
         Pattern pstatus = Pattern.compile(status);
-
+        Pattern pfind = Pattern.compile(find);
         if (pregister.matcher(readline).matches()) {//REGISTO DE UM FICHEIRO
             List<String> regToken = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(readline, " ");
-            while(st.hasMoreTokens()){
+            while (st.hasMoreTokens()) {
                 regToken.add(st.nextToken());
             }
             Peer.register(regToken.get(1));
-     
-        
-        
+
+
+
         } else if (pget.matcher(readline).matches()) {
-            
         } else if (pstatus.matcher(readline).matches()) {
             Peer.status();
+        } else if (pfind.matcher(readline).matches()) {
+            Peer.find(pfind.split(" ", 2)[1]);
+        } else if (readline.equals("refresh")) {
+            Checker.refresh();
         } else {
             System.out.println("Comando Invalido");
         }

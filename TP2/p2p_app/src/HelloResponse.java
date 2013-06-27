@@ -8,12 +8,14 @@ import java.util.Set;
 public class HelloResponse extends PDU implements Serializable {
 
     Set<InetAddress> valid_peer;
-    Map<String,Set<FileRegister>> ficheiros;
+    Map<String,FileRegister> filesComp;
+    Map<String,FileList> filesKnow;
     
     
-    public HelloResponse(InetAddress ip, int port, Set<InetAddress> valid_peer, Map<String,Set<FileRegister>> ficheiros) {
+    public HelloResponse(InetAddress ip, int port, Set<InetAddress> valid_peer, Map<String,FileRegister> ficheirosCompletos, Map<String,FileList> ficheirosConhecidos) {
         super(ip,port);
         this.valid_peer = valid_peer;
-        this.ficheiros = ficheiros;
+        this.filesComp = ficheirosCompletos;
+        this.filesKnow = ficheirosConhecidos;
     }
 }
