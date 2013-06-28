@@ -23,7 +23,7 @@ public class ReadLine implements Runnable {
         Pattern pregister = Pattern.compile(register + pathREG + fileREG);
         Pattern pget = Pattern.compile(get + fileREG);
         Pattern pstatus = Pattern.compile(status);
-        Pattern pfind = Pattern.compile(find);
+        Pattern pfind = Pattern.compile(find+fileREG);
         if (pregister.matcher(readline).matches()) {//REGISTO DE UM FICHEIRO
             List<String> regToken = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(readline, " ");
@@ -38,7 +38,7 @@ public class ReadLine implements Runnable {
         } else if (pstatus.matcher(readline).matches()) {
             Peer.status();
         } else if (pfind.matcher(readline).matches()) {
-            Peer.find(pfind.split(" ", 2)[1]);
+            Peer.find(readline.split(" ", 2)[1]);
         } else if (readline.equals("refresh")) {
             Checker.refresh();
         } else {

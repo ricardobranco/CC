@@ -90,6 +90,8 @@ public class Peer {
         try {
             byte[] hello = Peer.serializa(pdu);
             byte[] resposta = new byte[3 * 1024];
+
+
             try (DatagramSocket ds = new DatagramSocket()) {
                 DatagramPacket dp = new DatagramPacket(hello, hello.length, ip, port);
                 DatagramPacket dpresposta;
@@ -146,6 +148,70 @@ public class Peer {
         }
     }
 
+    public static Set<FileRegister> MatchFiles(String arg) {
+        Set<FileRegister> ficheiros = new HashSet<>();
+        //PROCURA LOCAL
+        for (FileList fl : Peer.knowFiles.values()) {
+            for (FileRegister fr : fl.files) {
+                if (fr.nome.contains(arg)) {
+                    ficheiros.add(fr);
+                }
+            }
+        }
+
+        return ficheiros;
+    }
+
+    public static void find(String arg) {
+        Set<FileRegister> ficheiros = MatchFiles(arg);
+
+
+
+        //PROCURA REMOTA
+
+        for (InetAddress ip : Peer.validPeer) {
+            PDU pdu = new Find(arg, ip, Peer.PORT);
+            try {
+                byte[] find = serializa(pdu);
+                byte[] resposta = new byte[3 * 1024];
+
+                try (DatagramSocket ds = new DatagramSocket()) {
+                    DatagramPacket dp = new DatagramPacket(find, find.length, ip, PORT);
+                    DatagramPacket dpresposta;
+
+                    ds.send(dp);
+                    ds.setSoTimeout(Peer.T3);
+                    dpresposta = new DatagramPacket(resposta, resposta.length);
+                    try {
+                        ds.receive(dpresposta);
+                        FindResponse fresp = (FindResponse) Peer.desSerializa(resposta);
+
+                        for (FileRegister fr : fresp.files) {
+                            addFile(fr);
+                            ficheiros.add(fr);
+                        }
+
+
+                    } catch (SocketTimeoutException e) {
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } catch (SocketException ex) {
+                    Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        System.out.println(
+                "--Ficheiros Encontrados");
+
+        for (FileRegister fr : ficheiros) {
+            System.out.println("\t" + fr.nome + " de " + fr.ip.getHostAddress() + " com " + (fr.size / 1024) + " KB");
+        }
+    }
+
     public static byte[] readChunk(String file, int offset, int size) {
 
         return null;
@@ -176,8 +242,19 @@ public class Peer {
             tpdnetwork.join();
             tservidor.join();
             tcliente.join();
+
+
+
+
+
+
+
+
+
+
         } catch (InterruptedException ex) {
-            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Peer.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
