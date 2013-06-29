@@ -15,6 +15,7 @@ import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -28,10 +29,13 @@ public class Peer {
     public static int T3 = 1000; //TEMPO PARA OBTER PRIMITIVA
     public static int PORT = 28280;
     public static int R = 7; //Nº TENTATIVAS
+    public static long CHUNKSIZE = 1024;
     public static Set<InetAddress> validPeer = new HashSet<>();
     public static Set<InetAddress> myIP = Peer.getSelfIPs();
     public static Map<String, FileRegister> myFiles = new HashMap<>();
     public static Map<String, FileList> knowFiles = new HashMap<>();
+    public static Map<String, FileBuilder> newfiles = new HashMap<>();
+    
     //INCOMPLETOS
     Server servidor;
     Client cliente;
@@ -212,6 +216,53 @@ public class Peer {
         }
     }
 
+    public static void get(String arg){
+    
+        //CALCULAR TAMANHO DE CADA CHUNK
+        FileRegister filereg = Peer.knowFiles.values().iterator().next().files.iterator().next();
+        long totalchunks = filereg.size/Peer.CHUNKSIZE;
+        
+        
+        
+        
+
+        for (InetAddress ip : Peer.validPeer) {
+            PDU pdu = new Find(arg, ip, Peer.PORT);
+            try {
+                byte[] find = serializa(pdu);
+                byte[] resposta = new byte[3 * 1024];
+
+                try (DatagramSocket ds = new DatagramSocket()) {
+                    DatagramPacket dp = new DatagramPacket(find, find.length, ip, PORT);
+                    DatagramPacket dpresposta;
+
+                    ds.send(dp);
+                    ds.setSoTimeout(Peer.T3);
+                    dpresposta = new DatagramPacket(resposta, resposta.length);
+                    try {
+                        ds.receive(dpresposta);
+                        FindResponse fresp = (FindResponse) Peer.desSerializa(resposta);
+
+                        for (FileRegister fr : fresp.files) {
+                            addFile(fr);
+                            ficheiros.add(fr);
+                        }
+
+
+                    } catch (SocketTimeoutException e) {
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } catch (SocketException ex) {
+                    Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
     public static byte[] readChunk(String file, int offset, int size) {
 
         return null;
@@ -242,14 +293,6 @@ public class Peer {
             tpdnetwork.join();
             tservidor.join();
             tcliente.join();
-
-
-
-
-
-
-
-
 
 
         } catch (InterruptedException ex) {
@@ -283,6 +326,11 @@ public class Peer {
         }
     }
 
+    
+    
+    
+    
+    
     public static void status() {
         System.out.println("--IPs VALIDOS--");
         for (InetAddress ip : validPeer) {

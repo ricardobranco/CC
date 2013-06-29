@@ -35,6 +35,7 @@ public class ReadLine implements Runnable {
 
 
         } else if (pget.matcher(readline).matches()) {
+            Peer.get(readline.split(" ", 2)[1]);
         } else if (pstatus.matcher(readline).matches()) {
             Peer.status();
         } else if (pfind.matcher(readline).matches()) {
