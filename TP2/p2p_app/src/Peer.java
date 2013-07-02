@@ -28,7 +28,7 @@ public class Peer {
     public static int T3 = 1000; //TEMPO PARA OBTER PRIMITIVA
     public static int PORT = 28280;
     public static int R = 7; //Nº TENTATIVAS
-    public static long CHUNKSIZE = 5;
+    public static long CHUNKSIZE = 28;
     public static Set<InetAddress> validPeer = new HashSet<>();
     public static Set<InetAddress> myIP = Peer.getSelfIPs();
     public static Map<String, FileRegister> myFiles = new HashMap<>();
@@ -210,7 +210,7 @@ public class Peer {
                 "--Ficheiros Encontrados");
 
         for (FileRegister fr : ficheiros) {
-            System.out.println("\t" + fr.nome + " de " + fr.ip.getHostAddress() + " com " + (fr.size / 1024) + " KB");
+            System.out.println("\t" + fr.nome + " de " + fr.ip.getHostAddress() + " com " + fr.size + " Bytes");
         }
     }
 
@@ -235,11 +235,17 @@ public class Peer {
         String nome = knowFiles.get(label).files.iterator().next().nome;
         long w = filesize / CHUNKSIZE * k;;
         int offset = 1;
+
         FileBuilder fb = new FileBuilder((int) filesize, nome);
-        while (fb.remaining != 0) { //Até o ficheiro estar concluido
+
+        while (fb.remaining > 0) { //Até o ficheiro estar concluido
             for (InetAddress ip : peers) {
                 try (DatagramSocket ds = new DatagramSocket()) {
-                    PDU pdu = new Chunk(ip, PORT, offset, (int) (CHUNKSIZE < filesize ? CHUNKSIZE : filesize), nome);
+                    System.out.println("GET:" + nome + " >> " + fb.remaining + " bytes restantes");
+                    if (fb.remaining <= 0) {
+                        break;
+                    }
+                    PDU pdu = new Chunk(ip, PORT, offset, (int) (CHUNKSIZE < fb.remaining ? CHUNKSIZE : fb.remaining), nome);
                     byte[] chunk = serializa(pdu);
                     byte[] resposta = new byte[3 * 1024];
                     DatagramPacket dp = new DatagramPacket(chunk, chunk.length, ip, PORT);
@@ -251,15 +257,16 @@ public class Peer {
                     try {
                         ds.receive(dpresposta);
                         ChunkResponse cr = (ChunkResponse) desSerializa(resposta);
-                        fb.addChunk(cr, offset);
-                        offset += CHUNKSIZE;
-                        System.out.println("GET:" + nome + " >> " + fb.remaining + " bytes restantes");
 
+                        fb.addChunk(cr, offset);
+                        fb.remaining -= CHUNKSIZE;
+                        offset += CHUNKSIZE;
 
 
                     } catch (SocketTimeoutException e) {
-                        //REMOVE PEER
+                        System.out.println("ERRO1");
                     } catch (ClassNotFoundException ex) {
+                        System.out.println("ERRO2");
                     }
 
 
@@ -270,6 +277,7 @@ public class Peer {
                 }
 
             }
+
         }
         fb.saveFile();
 

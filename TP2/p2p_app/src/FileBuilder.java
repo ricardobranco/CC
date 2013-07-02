@@ -19,9 +19,10 @@ public class FileBuilder {
     }
     
     public void addChunk(ChunkResponse cr, int offset){
+        System.out.println("remaining"+this.remaining+":tamanho do chunk recebido"+cr.chunk.length);
         for(int i = offset-1; i<cr.chunk.length;i++){
             bytes[i]=cr.chunk[i];
-            remaining--;
+          //  remaining--;
         }
         
     }
@@ -35,6 +36,7 @@ public class FileBuilder {
             FileRegister fr = new FileRegister(nome, filedest,Peer.myIP.iterator().next(),Peer.PORT,bytes.length);
             Peer.myFiles.put(nome, fr);
             System.out.println(nome+" criado com sucesso");
+            raf.close();
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FileBuilder.class.getName()).log(Level.SEVERE, null, ex);

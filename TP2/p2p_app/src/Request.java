@@ -47,12 +47,13 @@ public class Request implements Runnable {
                     RandomAccessFile raf = new RandomAccessFile(Peer.myFiles.get(chunk.nome).path, "rw");
                     byte[] bchunk = new byte[chunk.size];
                     System.out.println("Offset: "+chunk.offset+ " size: "+chunk.size);
-                    raf.read(bchunk, chunk.offset-1, chunk.size);
+                    raf.seek(chunk.offset-1);
+                    raf.read(bchunk);
                     ChunkResponse cresp = new ChunkResponse(dp.getAddress(), dp.getPort(), bchunk);
                     byte_resposta = Peer.serializa(cresp);
                     resposta = new DatagramPacket(byte_resposta, byte_resposta.length, dp.getAddress(), dp.getPort());
                     ds.send(resposta);
-
+                    raf.close();
 
                     break;
 
