@@ -28,7 +28,7 @@ public class Peer {
     public static int T3 = 1000; //TEMPO PARA OBTER PRIMITIVA
     public static int PORT = 28280;
     public static int R = 7; //Nº TENTATIVAS
-    public static long CHUNKSIZE = 28;
+    public static long CHUNKSIZE = 1024;
     public static Set<InetAddress> validPeer = new HashSet<>();
     public static Set<InetAddress> myIP = Peer.getSelfIPs();
     public static Map<String, FileRegister> myFiles = new HashMap<>();
